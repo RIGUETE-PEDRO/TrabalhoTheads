@@ -171,6 +171,13 @@ public class Principal extends JFrame {
 		JButton btnPorData = new JButton("Buscar Por Data");
 		btnPorData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				if (txtDataInicial.getText().equals("  -  -    ") ||
+					    txtDataFinal.getText().equals("  -  -    ")) {
+					    return;
+					}
+
+				
 				String InicialMySQL =
 				        LocalDate.parse(
 				                txtDataInicial.getText(),
