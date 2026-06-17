@@ -124,6 +124,77 @@ public class Persistencia {
 		
 		return tarefas;
 	}
+
+	public intervalorData BuscarPorData(String dataFinal, String dataInicial) {
+	    intervalorData data = new intervalorData(); 
+	    Tarefas tarefas = new Tarefas();
+
+	    String CriadaNaoFeita = "SELECT COUNT(*) AS total FROM Atividade where DataCriacao BETWEEN '"+dataInicial+"' and '"+dataFinal+"' and DataExecucao IS NULL ;"; 
+		String CriadaFeitas = "SELECT COUNT(*) AS total FROM Atividade where DataCriacao BETWEEN '"+dataInicial+"' and '"+dataFinal+"' and DataExecucao IS NOT NULL ;"; 
+		String FuncTrabalhador =
+		        "SELECT f.idFuncionario, f.Nome, COUNT(a.idAtividade) AS total " +
+		        "FROM Funcionario f " +
+		        "INNER JOIN Atividade a ON a.idExecutor = f.idFuncionario " +
+		        "WHERE a.DataExecucao BETWEEN '" + dataInicial + "' AND '" + dataFinal + "' " +
+		        "GROUP BY f.idFuncionario, f.Nome " +
+		        "ORDER BY total DESC " +
+		        "LIMIT 1";
+
+	    ResultSet FuncionarioMaisTrabalhou = C1.ExecutaConsulta(FuncTrabalhador);      
+	    ResultSet CriadasPeriodo = C1.ExecutaConsulta(CriadaFeitas);
+	    ResultSet CriadasPeriodoNaoFeita = C1.ExecutaConsulta(CriadaNaoFeita);
+
+	    try {
+	        if (CriadasPeriodo.next()) {
+	            tarefas.setAtribuidas(
+	                "Quantidade de atividades criadas nesse período = " 
+	                + CriadasPeriodo.getString("total")
+	            );
+	        }
+
+	        if (CriadasPeriodoNaoFeita.next()) {
+	            tarefas.setPendente(
+	                "Quantidade de atividades criadas nesse período que ainda não foram finalizadas = "
+	                + CriadasPeriodoNaoFeita.getString("total")
+	            );
+	        }
+
+	        if (FuncionarioMaisTrabalhou != null && FuncionarioMaisTrabalhou.next()) {
+	            Funcionario funcionario = new Funcionario();
+
+	            funcionario.setIdFuncionario(
+	                FuncionarioMaisTrabalhou.getInt("idFuncionario")
+	            );
+
+	            funcionario.setNome(
+	                FuncionarioMaisTrabalhou.getString("Nome")
+	            );
+
+	            data.setFuncionario(funcionario);
+
+	            data.setQuantasAtividadeFunc(
+	                "Quantidade de tarefas feitas foi = " 
+	                + FuncionarioMaisTrabalhou.getString("total")
+	            );
+	        } else {
+	            Funcionario funcionario = new Funcionario();
+	            funcionario.setNome("Nenhum funcionário encontrado");
+
+	            data.setFuncionario(funcionario);
+	            data.setQuantasAtividadeFunc("Quantidade de tarefas feitas foi = 0");
+	        }
+	        
+
+	        data.setTarefa(tarefas);
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return data;    
+	}
+	
+	
 	
 	
 	

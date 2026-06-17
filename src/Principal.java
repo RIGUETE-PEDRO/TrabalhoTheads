@@ -3,17 +3,27 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
+import java.awt.TextField;
+import javax.swing.JTextField;
+import javax.swing.text.DefaultFormatterFactory;
 
 public class Principal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private Persistencia P1;
+	private JTextField txtDataInicial;
+	private JTextField txtDataFinal;
 	
 	/**
 	 * Launch the application.
@@ -108,6 +118,79 @@ public class Principal extends JFrame {
 		btnBuscarAtividadesPor.setBounds(423, 146, 254, 27);
 		contentPane.add(btnBuscarAtividadesPor);
 		ThreadBuscaFuncionario f = new ThreadBuscaFuncionario(P1, cbxFuncionario);
+		
+		txtDataInicial = new JFormattedTextField();
+		txtDataInicial.setBounds(51, 259, 194, 21);
+		txtDataInicial.setColumns(10);
+		contentPane.add(txtDataInicial);
+
+		txtDataFinal = new JFormattedTextField();
+		txtDataFinal.setBounds(331, 259, 194, 21);
+		txtDataFinal.setColumns(10);
+		contentPane.add(txtDataFinal);
+
+		try {
+		    MaskFormatter mascara = new MaskFormatter("##-##-####");
+
+		    ((JFormattedTextField) txtDataInicial).setFormatterFactory(
+		            new DefaultFormatterFactory(mascara));
+
+		    ((JFormattedTextField) txtDataFinal).setFormatterFactory(
+		            new DefaultFormatterFactory(
+		                    new MaskFormatter("##-##-####")));
+
+		} catch (ParseException e) {
+		    e.printStackTrace();
+		}
+		
+		
+		JLabel lblDe = new JLabel("De");
+		lblDe.setBounds(12, 255, 38, 28);
+		contentPane.add(lblDe);
+		
+		JLabel lblAt = new JLabel("Até");
+		lblAt.setBounds(291, 255, 38, 28);
+		contentPane.add(lblAt);
+		
+		JLabel lblAtivCriadas = new JLabel("");
+		lblAtivCriadas.setBounds(25, 308, 732, 17);
+		contentPane.add(lblAtivCriadas);
+		
+		JLabel lblAtivNaoFinalizadas = new JLabel("");
+		lblAtivNaoFinalizadas.setBounds(25, 346, 816, 17);
+		contentPane.add(lblAtivNaoFinalizadas);
+		
+		JLabel lblMaisTarefas = new JLabel("");
+		lblMaisTarefas.setBounds(25, 408, 408, 17);
+		contentPane.add(lblMaisTarefas);
+		
+		JLabel lblMaisTrabalhador = new JLabel("");
+		lblMaisTrabalhador.setBounds(25, 449, 221, 17);
+		contentPane.add(lblMaisTrabalhador);
+		
+		JButton btnPorData = new JButton("Buscar Por Data");
+		btnPorData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String InicialMySQL =
+				        LocalDate.parse(
+				                txtDataInicial.getText(),
+				                DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+				        .toString();
+
+				String FinalMySQL =
+				        LocalDate.parse(
+				                txtDataFinal.getText(),
+				                DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+				        .toString();
+				ThreadBuscarPorData buscDate = new ThreadBuscarPorData(P1,lblAtivCriadas,lblAtivNaoFinalizadas,lblMaisTarefas,lblMaisTrabalhador,InicialMySQL,FinalMySQL);
+				buscDate.start();
+				
+			}
+		});
+		btnPorData.setBounds(549, 256, 146, 27);
+		contentPane.add(btnPorData);
+		
+		
 		
 		
 		f.start();
