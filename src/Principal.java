@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.awt.event.ActionEvent;
 import java.awt.TextField;
 import javax.swing.JTextField;
@@ -166,29 +168,43 @@ public class Principal extends JFrame {
 		
 		JButton btnPorData = new JButton("Buscar Por Data");
 		btnPorData.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if (txtDataInicial.getText().equals("  -  -    ") ||
-					    txtDataFinal.getText().equals("  -  -    ")) {
-					    return;
-					}
+		    public void actionPerformed(ActionEvent e) {
 
-				
-				String InicialMySQL =
-				        LocalDate.parse(
-				                txtDataInicial.getText(),
-				                DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-				        .toString();
+		        if (txtDataInicial.getText().equals("  -  -    ") ||
+		            txtDataFinal.getText().equals("  -  -    ")) {
+		            return;
+		        }
 
-				String FinalMySQL =
-				        LocalDate.parse(
-				                txtDataFinal.getText(),
-				                DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-				        .toString();
-				ThreadBuscarPorData buscDate = new ThreadBuscarPorData(P1,lblAtivCriadas,lblAtivNaoFinalizadas,lblMaisTarefas,InicialMySQL,FinalMySQL);
-				buscDate.start();
-				
-			}
+		        try {
+		            DateTimeFormatter formatter =
+		                    DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		            String InicialMySQL =
+		                    LocalDate.parse(txtDataInicial.getText(), formatter)
+		                             .toString();
+
+		            String FinalMySQL =
+		                    LocalDate.parse(txtDataFinal.getText(), formatter)
+		                             .toString();
+
+		            ThreadBuscarPorData buscDate = new ThreadBuscarPorData(
+		                    P1,
+		                    lblAtivCriadas,
+		                    lblAtivNaoFinalizadas,
+		                    lblMaisTarefas,
+		                    InicialMySQL,
+		                    FinalMySQL
+		            );
+
+		            buscDate.start();
+
+		        } catch (DateTimeParseException ex) {
+		            JOptionPane.showMessageDialog(
+		                    null,
+		                    "Digite uma data válida no formato dd-MM-yyyy."
+		            );
+		        }
+		    }
 		});
 		btnPorData.setBounds(549, 256, 146, 27);
 		contentPane.add(btnPorData);
