@@ -164,10 +164,6 @@ public class Principal extends JFrame {
 		lblMaisTarefas.setBounds(25, 408, 408, 17);
 		contentPane.add(lblMaisTarefas);
 		
-		JLabel lblMaisTrabalhador = new JLabel("");
-		lblMaisTrabalhador.setBounds(25, 449, 221, 17);
-		contentPane.add(lblMaisTrabalhador);
-		
 		JButton btnPorData = new JButton("Buscar Por Data");
 		btnPorData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -189,7 +185,7 @@ public class Principal extends JFrame {
 				                txtDataFinal.getText(),
 				                DateTimeFormatter.ofPattern("dd-MM-yyyy"))
 				        .toString();
-				ThreadBuscarPorData buscDate = new ThreadBuscarPorData(P1,lblAtivCriadas,lblAtivNaoFinalizadas,lblMaisTarefas,lblMaisTrabalhador,InicialMySQL,FinalMySQL);
+				ThreadBuscarPorData buscDate = new ThreadBuscarPorData(P1,lblAtivCriadas,lblAtivNaoFinalizadas,lblMaisTarefas,InicialMySQL,FinalMySQL);
 				buscDate.start();
 				
 			}

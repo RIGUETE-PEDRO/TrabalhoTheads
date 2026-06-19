@@ -13,12 +13,11 @@ public class ThreadBuscarPorData extends Thread {
 	private String dataInicial;
 	private String dataFinal;
 	
-	public ThreadBuscarPorData (Persistencia P1,JLabel ativCriadas,JLabel ativNaoFinalizada,JLabel MaisTarefas,JLabel nomeMaisTrabalhoso,String dataInicial,String dataFinal ) {
+	public ThreadBuscarPorData (Persistencia P1,JLabel ativCriadas,JLabel ativNaoFinalizada,JLabel MaisTarefas,String dataInicial,String dataFinal ) {
 		this.P1 = P1;
 		this.ativCriadas = ativCriadas;
 		this.ativNaoFinalizada = ativNaoFinalizada;
 		this.MaisTarefas = MaisTarefas;
-		this.nomeMaisTrabalhoso = nomeMaisTrabalhoso;
 		this.dataInicial= dataInicial;
 		this.dataFinal= dataFinal;
 	}
@@ -30,8 +29,7 @@ public class ThreadBuscarPorData extends Thread {
 		 EventQueue.invokeLater(() -> {
 			ativCriadas.setText(data.getTarefa().getAtribuidas());
 			ativNaoFinalizada.setText(data.getTarefa().getPendente());
-			MaisTarefas.setText(data.getQuantasAtividadeFunc());
-			nomeMaisTrabalhoso.setText(data.getFuncionario().getNome());
+			MaisTarefas.setText("foram feita "+data.getQuantasAtividadeFunc()+"pelo(a) "+ data.getFuncionario().getNome() );
 		 });
 	}
 }
